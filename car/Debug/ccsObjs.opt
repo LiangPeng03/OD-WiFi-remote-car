@@ -1,0 +1,9 @@
+"./WIFI.obj"
+"./main.obj"
+"./motor.obj"
+"./tm4c123gh6pm_startup_ccs.obj"
+"./uartstdio.obj"
+"./ustdlib.obj"
+"../tm4c123gh6pm.cmd"
+-llibc.a
+-l"D:/enbeded/TivaWare_C_Series/driverlib/ccs/Debug/driverlib.lib"
