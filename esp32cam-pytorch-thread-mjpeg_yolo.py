@@ -18,6 +18,9 @@ import time
 import cv2
 from vis import vis_det_img, cv2AddChineseText
 
+import socket
+import json
+
 def loop1():
     '''esp32cam image mjpeg'''
     global img
@@ -34,7 +37,7 @@ def loop1():
             b = bytes.find(b'\xff\xd9')
             
             if a != -1 and b != -1:
-                print('find jpg')
+                # print('find jpg')
                 jpg = bytes[a:b + 2]
                 bytes = bytes[b + 2:]
                 
@@ -106,6 +109,7 @@ def loop3():
     '''modelscope processing'''
     global result_c
     global result_d
+    global stop
     while not exit_flag:
         if model_sel == 'g' or model_sel == 'd' or model_sel == 'r':
             '''image classification'''
@@ -127,6 +131,28 @@ def loop3():
             elif model_sel == 'p':
                 result_d = phone_detection(img)
             print(result_d)
+            if result_d['labels'] == ['bottle']and result_d['boxes'][0][2]-result_d['boxes'][0][0]>80:
+                # 发送信号“nn”到服务器
+                try:
+                    # 创建一个 TCP/IP socket
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+                    # 连接到服务器
+                    server_address = ('192.168.137.217', 8080)  # 使用服务器地址和端口
+                    sock.connect(server_address)
+
+                    # 发送 HTTP 请求                    
+                    tt = "ss"                  
+                    
+                    sock.sendall(tt.encode())
+                    time.sleep(0.1)
+                    # 接收响应
+                    # response = sock.recv(4096)  # 接收4096字节的响应
+                    # print(f"Signal sent to server, response: {response.decode()}")
+                    
+                except Exception as e:
+                    print(f"Failed to send signal: {e}")
+                
     print('loop3 exit normally')
 
 def keyboard_callback(x):
@@ -157,7 +183,7 @@ def keyboard_callback(x):
 if __name__ == '__main__':
     '''loop1 initialization'''
     # 初始化esp32cam url
-    url='http://192.168.53.244//' # 改成串口收到的ESP32-CAM内网url，检查ESP32-CAM和上位机是不是在一个局域网网段上。
+    url='http://192.168.137.120//' # 改成串口收到的ESP32-CAM内网url，检查ESP32-CAM和上位机是不是在一个局域网网段上。
 
     # 初始化global img变量，存储esp32cam捕获到的图片（opencv格式）
     img = np.zeros((296, 400, 3), np.uint8)
@@ -171,20 +197,22 @@ if __name__ == '__main__':
     
     '''object detection'''
     object_detection = pipeline(Tasks.image_object_detection,model='damo/cv_tinynas_object-detection_damoyolo')
-    head_detection = pipeline(Tasks.domain_specific_object_detection, model='damo/cv_tinynas_head-detection_damoyolo')
-    facemask_detection = pipeline(Tasks.domain_specific_object_detection, model='damo/cv_tinynas_object-detection_damoyolo_facemask')
+    #head_detection = pipeline(Tasks.domain_specific_object_detection, model='damo/cv_tinynas_head-detection_damoyolo')
+    #facemask_detection = pipeline(Tasks.domain_specific_object_detection, model='damo/cv_tinynas_object-detection_damoyolo_facemask')
     phone_detection = pipeline(Tasks.domain_specific_object_detection, model='damo/cv_tinynas_object-detection_damoyolo_phone')
 
     # 初始化global result_c和global result_d变量，用于存储模型推理的结果（loop3）
     result_c = {'scores': [0,0,0,0,0], 'labels': ['','','','','']}
     result_d = {'scores': [], 'labels': [], 'boxes': []}
 
+    stop = False
+    
     '''keyboard_callback initialization'''
     # 初始化global model_sel变量，用于存储模型选择的标识符（keyboard_callback）
     model_sel = 'o'
 
     # 创建按键监听线程，按下任何按键时（包括长按），都会调用keyboard_callback，并传入键盘事件作为参量
-    keyboard.on_press(keyboard_callback)
+    #skeyboard.on_press(keyboard_callback)
 
     # 初始化控制线程正常退出的标志位
     exit_flag = False
