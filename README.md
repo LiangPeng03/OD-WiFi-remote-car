@@ -35,20 +35,7 @@ A Wi-Fi remote-control car controlled by computer keyboard input, with Wi-Fi ima
 
 ## Project Structure
 
-.
-├── car/                                      # Cart movement module
-│   ├── Debug/                                # Compile output
-│   │   ├── car.out                           
-│   │   └── ...                               # Other compilation intermediate files
-│   ├── motor.c                               # driver of motors (PWM)
-│   ├── motor.h
-│   ├── WIFI.c                                # esp8266WiFi communication module
-│   ├── WIFI.h
-│   ├── main.c                                # main
-│   ├── main.h
-│   └── ...                                   # Other TivaWare library files
-├── esp32cam-pytorch-thread-mjpeg_yolo.py     # ESP32-CAM image processing and object detection program
-├── control.py                     	   # Remote control program
+![](/file-tree/en.png)
 
 
 

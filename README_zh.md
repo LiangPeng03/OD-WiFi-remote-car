@@ -35,20 +35,7 @@
 
 ## 项目结构
 
-.
-├── car/                                      # 车辆行驶模块
-│   ├── Debug/                                # 编译输出目录
-│   │   ├── car.out                           
-│   │   └── ...                               # 其他编译中间文件
-│   ├── motor.c                               # 电机驱动（PWM）
-│   ├── motor.h
-│   ├── WIFI.c                                # esp8266WiFi 通信模块
-│   ├── WIFI.h
-│   ├── main.c                                # 主程序
-│   ├── main.h
-│   └── ...                                   # 其他TivaWare库文件
-├── esp32cam-pytorch-thread-mjpeg_yolo.py     # ESP32-CAM 图像处理和物体识别程序
-├── control.py                     	   # 遥控程序
+![](/file-tree/zh.png)
 
   
 
